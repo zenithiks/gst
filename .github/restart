@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+
+[[ $(id -u) != 0 ]] && echo 请使用root用户运行 && exit 1
+
+case $(uname -s) in
+"Darwin")
+  sudo launchctl unload /Library/LaunchDaemons/me.shmilwdc.gst.plist
+  sudo launchctl load -w /Library/LaunchDaemons/me.shmilwdc.gst.plist
+  ;;
+"Linux")
+  sudo systemctl restart gst
+  ;;
+*)
+  echo 这个脚本不支持你的系统.
+  ;;
+esac

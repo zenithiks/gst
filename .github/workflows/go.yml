@@ -1,0 +1,43 @@
+name: Go
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Prepare Scripts
+        run: |
+          cp conf/gst.toml .
+          cp -r .github/* .
+
+      - name: Build Matrix
+        run: |
+          GOOS=linux GOARCH=amd64 make build
+          tar czvf gst-linux-amd64.tar.gz gst gst.toml gst.service
+
+          GOOS=darwin GOARCH=amd64 make build
+          tar czvf gst-darwin-amd64.tar.gz gst gst.toml me.shmilwdc.gst.plist
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            gst-linux-amd64.tar.gz
+            gst-darwin-amd64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

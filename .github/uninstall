@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+
+[[ $(id -u) != 0 ]] && echo 请使用root用户运行 && exit 1
+
+case $(uname -s) in
+"Darwin")
+  sudo launchctl unload /Library/LaunchDaemons/me.shmilwdc.gst.plist
+  sudo rm -rf /Library/LaunchDaemons/me.shmilwdc.gst.plist
+  rm -rf /usr/local/bin/tunnel /usr/local/etc/gst.toml
+  ;;
+"Linux")
+  sudo systemctl disable tunnel || true
+  sudo rm -rf /etc/systemd/system/tunnel.service
+  sudo rm -rf /usr/local/bin/gst /usr/local/etc/gst.toml
+  ;;
+*)
+  echo 这个脚本不支持你的系统.
+  ;;
+esac

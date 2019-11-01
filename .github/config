@@ -1,0 +1,36 @@
+# ifchange 192.168.1.174 开发机
+Host 174
+    HostName 192.168.1.174
+	User xiejiang
+    IdentityFile ~/.ssh/id_rsa
+	Port 22
+
+# ifchange 10.9.10.32 测试机
+Host 232
+    HostName 127.0.0.1
+	User atom_xiejiang
+	Port 23222
+
+# ifchange 10.9.10.38 测试机
+Host 238
+    HostName 127.0.0.1
+	User atom_xiejiang
+	Port 23822
+
+# ifchange 192.168.7.153 线上机
+Host 353
+    HostName 127.0.0.1
+	User atom_xiejiang
+	Port 35322
+
+# ifchange 192.168.7.154 线上机
+Host 354
+    HostName 127.0.0.1
+	User atom_xiejiang
+	Port 35422
+
+# ifchange 192.168.8.23 线上数据库查看机
+Host 323
+    HostName 127.0.0.1
+	User atom_xiejiang
+	Port 32322
