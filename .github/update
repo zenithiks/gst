@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -e
+
+[[ $(id -u) != 0 ]] && echo 请使用root用户运行 && exit 1
+
+[[ -d /tmp/gst ]] || mkdir /tmp/gst
+cd /tmp/gst
+
+case $(uname -s) in
+"Darwin")
+  curl -fsSL https://github.com/shmilwdc/gst/releases/latest/download/gst-darwin-amd64.tar.gz | tar xzv
+  sudo mkdir -p /usr/local/bin/
+  sudo mv -f gst /usr/local/bin/
+
+  if [[ -r /usr/local/etc/gst.toml ]]; then
+    echo 配置文件已经存在.
+  else
+    sudo mkdir -p /usr/local/etc/
+    sudo mv gst.toml /usr/local/etc/
+  fi
+
+  sudo launchctl unload /Library/LaunchDaemons/me.shmilwdc.gst.plist
+
+  sudo mv me.shmilwdc.gst.plist /Library/LaunchDaemons/
+  sudo chown root:wheel /Library/LaunchDaemons/me.shmilwdc.gst.plist
+  sudo launchctl load -w /Library/LaunchDaemons/me.shmilwdc.gst.plist
+  ;;
+
+"Linux")
+  if [[ "$(cat /proc/1/comm)" != "systemd" ]]; then
+    echo 你的系统不支持systemd. && exit 1
+  fi
+
+  curl -fsSL https://github.com/shmilwdc/gst/releases/latest/download/gst-linux-amd64.tar.gz | tar xzv
+  sudo mkdir -p /usr/local/bin/
+  sudo mv -f gst /usr/local/bin/
+
+  if [[ -r /usr/local/etc/gst.toml ]]; then
+    echo 配置文件已经存在.
+  else
+    sudo mkdir -p /usr/local/etc/
+    sudo mv gst.toml /usr/local/etc/
+  fi
+
+  sudo systemctl disable --now gst
+
+  sudo mv gst.service /etc/systemd/system/
+  sudo systemctl enable --now gst
+  ;;
+*)
+  echo 不支持在此平台上自动部署.
+  ;;
+esac
