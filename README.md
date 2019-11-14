@@ -23,6 +23,11 @@ bash -c "$(curl -sL https://git.io/JezpX)"
 bash -c "$(curl -sL https://git.io/Jezp1)"
 ```
 
+### 自动更新脚本
+```shell script
+bash -c "$(curl -sL https://git.io/Jergo)"
+```
+
 ### 自动重启脚本
 ```shell script
 bash -c "$(curl -sL https://git.io/JezpM)"
