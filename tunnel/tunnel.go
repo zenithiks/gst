@@ -17,19 +17,31 @@ type Tunnel struct {
 }
 
 func (t *Tunnel) Dial() {
-    listener, err := net.Listen("tcp", t.Local.String())
+    addr, err := net.ResolveTCPAddr("tcp", t.Local.String())
     if err != nil {
-        log.Errorf("local net.Listen error: %s\n", err)
+        log.Errorf("local net.ResolveTCPAddr error: %s\n", err)
+        return
+    }
+
+    listener, err := net.ListenTCP("tcp", addr)
+    if err != nil {
+        log.Errorf("local net.ListenTCP error: %s\n", err)
         return
     }
     defer listener.Close()
 
     for {
-        conn, err := listener.Accept()
+        conn, err := listener.AcceptTCP()
         if err != nil {
             log.Errorf("local listener.Accept error: %s\n", err)
             return
         }
+
+        err = conn.SetKeepAlive(true)
+        if err != nil {
+            log.Errorf("local conn.SetKeepAlive error: %s\n", err)
+        }
+
         go t.forward(conn)
     }
 }
